@@ -10,6 +10,7 @@ const routes = {
   '/api/chat/conversations': require('./api/chat/conversations.js'),
   '/api/chat/sync': require('./api/chat/sync.js'),
   '/api/chat/read': require('./api/chat/read.js'),
+  '/api/chat/purge': require('./api/chat/purge.js'),
   '/api/linker/verify': require('./api/linker/verify.js')
 };
 
