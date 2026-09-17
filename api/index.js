@@ -8,8 +8,10 @@ module.exports = async (req, res) => {
   res.end(JSON.stringify({
     service: 'BTVortex-Server',
     status: 'online',
-    version: '1.0.0',
+    version: '1.1.0',
+    antiSpoofing: 'authoritative_vortex_enforced',
     endpoints: [
+      '/api/auth/token',
       '/api/chat/send',
       '/api/chat/messages',
       '/api/chat/conversations',

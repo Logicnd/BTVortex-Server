@@ -3,6 +3,7 @@ const url = require('url');
 
 const routes = {
   '/api': require('./api/index.js'),
+  '/api/auth/token': require('./api/auth/token.js'),
   '/api/chat/send': require('./api/chat/send.js'),
   '/api/chat/messages': require('./api/chat/messages.js'),
   '/api/chat/conversations': require('./api/chat/conversations.js'),

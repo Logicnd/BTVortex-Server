@@ -1,5 +1,5 @@
 const { handleCors } = require('../../lib/cors');
-const { getSyncMessages } = require('../../lib/storage');
+const { getSyncMessages, verifyUserToken } = require('../../lib/storage');
 
 module.exports = async (req, res) => {
   if (handleCors(req, res)) return;
@@ -12,6 +12,18 @@ module.exports = async (req, res) => {
     res.statusCode = 400;
     res.setHeader('Content-Type', 'application/json');
     return res.end(JSON.stringify({ error: 'userId query parameter is required' }));
+  }
+
+  // Token check for private inbox sync
+  const authHeader = req.headers['authorization'] || '';
+  const token = authHeader.replace(/^Bearer\s+/i, '').trim() || url.searchParams.get('token');
+  if (token) {
+    const isTokenValid = await verifyUserToken(userId, token);
+    if (!isTokenValid) {
+      res.statusCode = 401;
+      res.setHeader('Content-Type', 'application/json');
+      return res.end(JSON.stringify({ error: 'Unauthorized: Session token invalid for this user ID.' }));
+    }
   }
 
   const newMessages = await getSyncMessages(userId, since);
