@@ -1,5 +1,5 @@
 const { handleCors } = require('../../lib/cors');
-const { validateMessage, sanitizeText, checkRateLimit, getAuthoritativeVortexUser } = require('../../lib/security');
+const { validateMessage, sanitizeText, checkRateLimit, getAuthoritativeVortexUser, areUsersFriends } = require('../../lib/security');
 const { saveMessage, verifyUserToken } = require('../../lib/storage');
 
 module.exports = async (req, res) => {
@@ -56,7 +56,16 @@ module.exports = async (req, res) => {
   }
   const cleanText = sanitizeText(validation.text);
 
-  // 4. Authoritative Username Enforcement (Zero-Trust)
+  
+  // 4. Friend-Only Enforcement: Verify sender and recipient are confirmed friends on PlayVortex
+  const isFriend = await areUsersFriends(senderId, receiverId);
+  if (!isFriend) {
+    res.statusCode = 403;
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify({ error: 'Forbidden: You can only direct message confirmed friends on PlayVortex.' }));
+  }
+
+  // 5. Authoritative Username Enforcement (Zero-Trust)
   // Query PlayVortex directly so no sender can fake their name or claim to be someone else!
   const authoritativeSender = await getAuthoritativeVortexUser(senderId);
   if (!authoritativeSender) {
