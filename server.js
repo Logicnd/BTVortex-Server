@@ -2,6 +2,7 @@ const http = require('http');
 const url = require('url');
 
 const routes = {
+  '/': require('./api/index.js'),
   '/api': require('./api/index.js'),
   '/api/auth/token': require('./api/auth/token.js'),
   '/api/chat/send': require('./api/chat/send.js'),

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BTVortex Server - Operational</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --bg: #0c0a14;
+      --card-bg: #141122;
+      --card-border: #262040;
+      --card-hover: #1a162e;
+      --primary: #a855f7;
+      --primary-glow: rgba(168, 85, 247, 0.35);
+      --accent: #6366f1;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --green: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.3);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.18) 0%, transparent 60%),
+        radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.12) 0%, transparent 50%);
+    }
+    .container {
+      width: 100%;
+      max-width: 780px;
+    }
+    .header-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 20px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+      position: relative;
+      overflow: hidden;
+    }
+    .header-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #9333ea, #6366f1, #3b82f6);
+    }
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 999px;
+      color: #34d399;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 var(--green-glow);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.02em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    h1 i {
+      color: var(--primary);
+    }
+    p.desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 16px 20px;
+    }
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .stat-val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .stat-val i {
+      font-size: 0.9rem;
+      color: #c084fc;
+    }
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .endpoint-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .endpoint-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      background: #110e1c;
+      border: 1px solid #231c36;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8125rem;
+      transition: all 0.2s;
+    }
+    .endpoint-row:hover {
+      background: #181328;
+      border-color: #372d54;
+    }
+    .method-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 0.6875rem;
+    }
+    .method-post { background: rgba(168, 85, 247, 0.2); color: #d8b4fe; }
+    .method-get { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+    .btn-test {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #9333ea, #6366f1);
+      color: #ffffff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.875rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .btn-test:hover { opacity: 0.9; }
+    #json-output {
+      margin-top: 14px;
+      padding: 14px;
+      background: #090710;
+      border: 1px solid #251d38;
+      border-radius: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      color: #38bdf8;
+      white-space: pre-wrap;
+      display: none;
+    }
+    footer {
+      text-align: center;
+      color: #64748b;
+      font-size: 0.8125rem;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-card">
+      <div class="status-pill">
+        <span class="pulse-dot"></span>
+        <span>Operational & Live</span>
+      </div>
+      <h1><i class="fa-solid fa-cloud-bolt"></i> BTVortex Server</h1>
+      <p class="desc">
+        Official cloud backend for BTVortex. Powers real-time chat messaging, delta sync polling, and zero-trust PlayVortex anti-spoofing verification.
+      </p>
+    </div>
+
+    <div class="grid">
+      <div class="stat-card">
+        <div class="stat-label">Version</div>
+        <div class="stat-val"><i class="fa-solid fa-code-branch"></i> v1.1.0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Anti-Spoofing</div>
+        <div class="stat-val" style="color: #34d399;"><i class="fa-solid fa-shield-halved"></i> Active</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Host Network</div>
+        <div class="stat-val"><i class="fa-solid fa-triangle"></i> Vercel Cloud</div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title">
+        <i class="fa-solid fa-server" style="color: #c084fc;"></i> Live Service Endpoints
+      </div>
+      <div class="endpoint-list">
+        <div class="endpoint-row">
+          <div><span class="method-badge method-get">GET</span> /api</div>
+          <span style="color: #64748b; font-size: 0.75rem;">Health check & status index</span>
+        </div>
+        <div class="endpoint-row">
+          <div><span class="method-badge method-post">POST</span> /api/auth/token</div>
+          <span style="color: #64748b; font-size: 0.75rem;">Session token issuance</span>
+        </div>
+        <div class="endpoint-row">
+          <div><span class="method-badge method-post">POST</span> /api/chat/send</div>
+          <span style="color: #64748b; font-size: 0.75rem;">Dispatches real message</span>
+        </div>
+        <div class="endpoint-row">
+          <div><span class="method-badge method-get">GET</span> /api/chat/sync</div>
+          <span style="color: #64748b; font-size: 0.75rem;">Real-time delta polling</span>
+        </div>
+        <div class="endpoint-row">
+          <div><span class="method-badge method-get">GET</span> /api/chat/conversations</div>
+          <span style="color: #64748b; font-size: 0.75rem;">Active chats & unread badges</span>
+        </div>
+        <div class="endpoint-row">
+          <div><span class="method-badge method-post">POST</span> /api/chat/read</div>
+          <span style="color: #64748b; font-size: 0.75rem;">Read receipt confirmations</span>
+        </div>
+        <div class="endpoint-row">
+          <div><span class="method-badge method-post">POST</span> /api/linker/verify</div>
+          <span style="color: #64748b; font-size: 0.75rem;">Bio linker verification</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 18px; display: flex; gap: 10px; align-items: center;">
+        <button type="button" class="btn-test" id="test-btn">
+          <i class="fa-solid fa-bolt"></i> Test API Ping
+        </button>
+        <a href="/api" target="_blank" style="color: #94a3b8; font-size: 0.8125rem; text-decoration: none;">
+          View raw JSON <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.7rem;"></i>
+        </a>
+      </div>
+      <pre id="json-output"></pre>
+    </div>
+
+    <footer>
+      BTVortex-Server &bull; Designed for PlayVortex &bull; All systems operational
+    </footer>
+  </div>
+
+  <script>
+    document.getElementById('test-btn').addEventListener('click', async () => {
+      const out = document.getElementById('json-output');
+      out.style.display = 'block';
+      out.textContent = 'Pinging /api...';
+      try {
+        const res = await fetch('/api');
+        const data = await res.json();
+        out.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        out.textContent = 'Error: ' + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
